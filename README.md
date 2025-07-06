@@ -1,7 +1,3 @@
-Here's a complete, professional, and step-by-step **`README.md`** file for your **Telco Customer Churn Prediction** project. This version is tailored for a GitHub repository and covers all aspects: project description, setup, data processing, training, evaluation, and deployment.
-
----
-
 # 📊 Telco Customer Churn Prediction
 
 This project predicts whether a customer will **churn** (i.e., leave the company) based on their demographic, service usage, and account data using **machine learning models (Random Forest, Decision Tree)**.

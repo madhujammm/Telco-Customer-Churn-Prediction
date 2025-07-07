@@ -1,171 +1,110 @@
-# 📊 Telco Customer Churn Prediction
-
-This project predicts whether a customer will **churn** (i.e., leave the company) based on their demographic, service usage, and account data using **machine learning models (Random Forest, Decision Tree)**.
-It also involves **EDA, feature engineering, hyperparameter tuning, and model saving** for deployment.
-
----
-
-## 📁 Table of Contents
-
-* [📌 Problem Statement](#-problem-statement)
-* [📦 Dataset](#-dataset)
-* [🛠️ Tech Stack](#️-tech-stack)
-* [🔍 EDA Insights](#-eda-insights)
-* [⚙️ Project Workflow](#️-project-workflow)
-* [🚀 Getting Started](#-getting-started)
-* [📈 Model Evaluation](#-model-evaluation)
-* [💾 Model Saving & Loading](#-model-saving--loading)
-* [📂 Directory Structure](#-directory-structure)
-
----
+# 📊 Customer Churn Prediction - Telecom Sector
 
 ## 📌 Problem Statement
 
-A telecom company wants to identify customers who are likely to **churn** so that targeted actions can be taken to retain them.
+A telecom company is experiencing customer churn and wants to identify which customers are likely to leave their services. By predicting churn in advance, the company can take targeted retention actions to reduce losses.
 
 ---
 
-## 📦 Dataset
+## 🧠 Objectives
 
-* **Name**: Telco-Customer-Churn.csv
-* **Rows**: 7043
-* **Columns**: 21
-* **Target column**: `Churn` (Yes/No)
+- Identify features that impact customer churn
+- Handle imbalanced dataset with resampling
+- Train multiple classification models
+- Evaluate performance using accuracy, confusion matrix, and cross-validation
+- Interpret results using SHAP
+- Save the best model for future predictions
+
+---
+
+## 📂 Dataset
+
+- **Source**: [Kaggle - Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
+- **Rows**: 7043
+- **Columns**: 20
+- **Target**: `Churn` (0: No, 1: Yes)
 
 ---
 
 ## 🛠️ Tech Stack
 
-* Python
-* Pandas, NumPy, Matplotlib, Seaborn
-* Scikit-learn (DecisionTree, RandomForest, GridSearchCV, StandardScaler)
-* Joblib (for model saving)
+- **Language**: Python
+- **Libraries**: 
+  - `pandas`, `numpy`, `matplotlib`, `seaborn`
+  - `scikit-learn`, `xgboost`, `lightgbm`, `shap`
+- **Model Persistence**: `pickle`
 
 ---
 
-## 🔍 EDA Insights
+## 📈 Workflow
 
-| Feature                  | Insight                                  |
-| ------------------------ | ---------------------------------------- |
-| `Contract_One year`      | Long-term contracts reduce churn         |
-| `tenure`, `TotalCharges` | Low tenure & low spending → higher churn |
-| `TechSupport_Yes`        | Access to support reduces churn          |
-| `PaymentMethod`          | Electronic checks linked to higher churn |
+### 🔹 1. Data Preprocessing
+- Removed customer ID
+- Converted categorical values to numerical
+- Cleaned `TotalCharges` column (object → float)
+- Dropped missing values
 
----
+### 🔹 2. EDA (Exploratory Data Analysis)
+- Correlation heatmaps
+- Distribution plots for each feature
+- Class imbalance check (`Churn` was imbalanced)
 
-## ⚙️ Project Workflow
+### 🔹 3. Data Balancing
+- Oversampled the minority class using `resample()` (up to 5163 rows)
 
-### 1. Data Preprocessing
+### 🔹 4. Modeling
+Trained and evaluated 8 models:
+- Logistic Regression
+- Random Forest ✅
+- Gradient Boosting
+- XGBoost
+- SVC
+- KNN
+- Naive Bayes
+- LightGBM
 
-* Loaded dataset using `pandas`
-* Converted `TotalCharges` to numeric
-* Dropped rows with missing values
-* Binary encoded columns like `gender`, `Partner`, `Churn`
-* One-hot encoded categorical variables
-* Feature scaling with `StandardScaler` on:
-
-  * `tenure`, `MonthlyCharges`, `TotalCharges`
-
-### 2. Exploratory Data Analysis (EDA)
-
-* Count plots and histograms
-* Correlation heatmaps
-* Identified key churn-driving features
-
-### 3. Model Training
-
-* **Models used**:
-
-  * `DecisionTreeClassifier`
-  * `RandomForestClassifier`
-* **Split**: `train_test_split` (80/20)
-
-### 4. Hyperparameter Tuning
-
-* Used `GridSearchCV` on Random Forest
-* Parameters tuned:
-
-  * `n_estimators`, `max_depth`, `min_samples_split`
-* Best Parameters:
-
-  ```python
-  {'max_depth': 10, 'min_samples_split': 10, 'n_estimators': 150}
-  ```
-
-### 5. Model Evaluation
-
-* Accuracy:
-
-  * Decision Tree: `~78.96%`
-  * Random Forest (default): `~79.31%`
-  * Random Forest (tuned): `~80.39%` (CV)
-
-### 6. Model Exporting
-
-* Saved models using `joblib`:
-
-  ```python
-  joblib.dump(best_model, 'best_random_forest_model.pkl')
-  ```
+### 🔹 5. Model Evaluation
+- Accuracy score
+- Confusion matrix
+- Classification report
+- Cross-validation (5 folds)
+- SHAP analysis for interpretability
 
 ---
 
-## 🚀 Getting Started
+## ✅ Best Model: Random Forest
 
-### 🔧 Requirements
+| Metric           | Value         |
+|------------------|---------------|
+| Accuracy         | **90.9%**     |
+| Precision (1)    | 0.88          |
+| Recall (1)       | 0.96          |
+| F1-Score (1)     | 0.92          |
 
-Install the required libraries:
+---
+
+## 🔍 SHAP & Interpretability
+
+- SHAP used to explain feature importance and understand model predictions.
+- Residual and Q-Q plots used for visual validation.
+
+---
+
+## 💾 Model Saving & Prediction
+
+- Best model (`RandomForestClassifier`) saved using `pickle`
+- Can be loaded and used for predictions on new data
+
+---
+
+## 📌 How to Run
 
 ```bash
-pip install pandas numpy matplotlib seaborn scikit-learn joblib
-```
+# Step 1: Install dependencies
+pip install -r requirements.txt
 
-### ▶️ Run the Code
+# Step 2: Run the notebook or Python script
+python churn_model.py
 
-1. Clone the repo
-2. Open `churn_prediction.ipynb` or run the script in your IDE
-3. Load the dataset: `Telco-Customer-Churn.csv`
-4. Run cells for EDA, preprocessing, model training, and evaluation
-
----
-
-## 📈 Model Evaluation
-
-| Model                    | Accuracy        |
-| ------------------------ | --------------- |
-| Decision Tree            | 78.96%          |
-| Random Forest (default)  | 79.31%          |
-| 🔧 Random Forest (tuned) | **80.39% (CV)** |
-
----
-
-## 💾 Model Saving & Loading
-
-```python
-# Save
-joblib.dump(grid_rf.best_estimator_, 'best_random_forest_model.pkl')
-
-# Load
-model = joblib.load('best_random_forest_model.pkl')
-
-# Predict
-predictions = model.predict(X_test)
-```
-
----
-
-## 📂 Directory Structure
-
-```
-📦 Telco-Churn-Prediction/
-├── Telco-Customer-Churn.csv
-├── churn_prediction.ipynb
-├── best_random_forest_model.pkl
-├── decision_tree_model.pkl
-├── README.md
-```
-
----
-
-
+# Step 3: Load saved model and predict
+pickle.load(open('Custormer_Churn_RF.pickle', 'rb'))
